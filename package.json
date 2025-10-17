@@ -3,12 +3,17 @@
     "description": "Dynamic Server",
     "version": "1.0.0",
     "author": {
-        "name": "",
-        "email": ""
+        "name": "Anne Martin",
+        "email": "mart1095@stthomas.edu"
     },
     "contributors": [
+        "Ada Huang <ada.huang@stthomas.edu>",
+        "Vincent Lam <lam01969@stthomas.edu>"
     ],
-    "repository": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/anne-mart/webdev-dynamic-project2"
+    },
     "dependencies": {
         "express": "^5.1.0",
         "sqlite3": "^5.1.7"
