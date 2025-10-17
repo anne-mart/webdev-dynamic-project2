@@ -1,0 +1,76 @@
+body {
+    background-color: #dbead7;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 1;
+    font-family:'Franklin Gothic Medium', sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: rgb(0, 0, 0);
+    font-family:'Times New Roman', sans-serif;
+    font-size: 2rem;
+    font-style: bold;
+    font-weight: default;
+    text-align: center;
+}
+h3 {
+    color: rgb(0, 0, 0);
+    font-family:'Times New Roman', sans-serif;
+    font-size: 1rem;
+    font-style: bold;
+    font-weight: default;
+    text-align: center;
+}
+h4 {
+    color: rgb(0, 0, 0);
+    font-family:'Times New Roman', sans-serif;
+    font-size: 1rem;
+    font-style: bold;
+    font-weight: default;
+    text-align: left;
+}
+.makeBold {
+    color: rgb(0, 0, 0);
+    font-family:'Times New Roman', sans-serif;
+    font-size: 1.25rem;
+    font-style: bold;
+    font-weight: bold;
+    text-align: default;
+}
+
+h2 {
+    color: #2e5d34;
+    font-family: 'Times New Roman', sans-serif;
+    font-size: 3rem;
+    font-style: bold;
+    font-weight: default;
+    text-align: center;
+}
+
+.titleBold {
+    color: #2e5d34;
+    font-family:'Times New Roman', sans-serif;
+    font-size: 2rem;
+    font-style: bold;
+    font-weight: default;
+    text-align: center;
+}
+
+.button {
+    background-color: #f4f1ea;
+    color: #2e5d34;
+}
+
+.cell.major {
+    background-color: #d0e6c2;
+}
+
+.cell.after-college {
+    background-color: #b7d7b0;
+}
+
+.cell.fun-fact {
+    background-color: #f6f3e7;
+}
