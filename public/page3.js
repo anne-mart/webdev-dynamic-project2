@@ -10,35 +10,39 @@ let names = {
     7: "Sunday"
 };
 
-let data = window.birth_data;
+fetch("/birth_day")
+    .then(res => {
+        return res.json();
+    })
+    .then(rows => {
+        let xValue = [];
+        let yValue = [];
 
-let xValue = [];
-let yValue = [];
-
-for (let day = 1; day <= 7; day++){
-    let total_days = 0;
-    for (let i = 0; i < data.length; i++){
-        let week_day = Number(data[i].day);
-        let sum = Number(data[i].total);
-        if(week_day === day){
-            total_days = sum;
+        for (let day = 1; day <= 7; day++){
+            let total_days = 0;
+            for (let i = 0; i < rows.length; i++){
+                let week_day = Number(rows[i].day);
+                let sum = Number(rows[i].total);
+                if(week_day === day){
+                    total_days = sum;
+                }
+            }
+            xValue.push(names[day]);
+            yValue.push(total_days);
         }
-    }
-    xValue.push(names[day]);
-    yValue.push(total_days);
-}
 
-let trace1 = {
-    x: xValue,
-    y: yValue,
-    type: "bar",
-    text: yValue,
-}
+        let trace1 = {
+            x: xValue,
+            y: yValue,
+            type: "bar",
+            text: yValue,
+        }
 
-let trace = [trace1];
+        let trace = [trace1];
 
-let layout = {
-    title: "Births per day"
-}
+        let layout = {
+            title: "Births per day"
+        }
 
-Plotly.newPlot("plot", trace, layout);
+        Plotly.newPlot("plot", trace, layout);
+    });

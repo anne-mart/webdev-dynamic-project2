@@ -20,21 +20,25 @@ const db = new sqlite3.Database("./births.sqlite3", sqlite3.OPEN_READONLY, (err)
   }
 })
 
-app.get("/page3", (req,res) =>{
+app.get("/birth_day", (req,res) =>{
     let sql = "SELECT day_of_week AS day, SUM(births) AS total ";
     sql += "FROM births_table GROUP BY day_of_week ORDER BY day_of_week";
-
-    db.all(sql, [], (err,rows) =>{
-        let response;
+    db.all(sql,[],(err,rows) => {
         if(err){
-            res.status(500).type('txt').send("SQL error");
+          res.status(500).type('txt').send("SQL error");
         }else{
-            fs.readFile(path.join(template, "page3.html"), {encoding: "utf8"}, (err,data) => {
-                response = data.replace("$$$DATA$$$","<script> window.birth_data = " + JSON.stringify(rows) + ";</script>");
-                res.status(200).type("html").send(response);
-            });
-        };
+          res.status(200).type("json").send(rows);
+        }
     });
+})
+app.get("/page3", (req,res) =>{
+      fs.readFile(path.join(template, "page3.html"), {encoding: "utf8"}, (err,data) => {
+        if(err){
+          res.status(500).type('txt').send("Template error");
+        }else{
+          res.status(200).type("html").send(data);
+        }
+      })
 });
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
