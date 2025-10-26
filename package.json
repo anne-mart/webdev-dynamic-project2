@@ -2,6 +2,7 @@
     "name": "dynamic_server",
     "description": "Dynamic Server",
     "version": "1.0.0",
+    "type": "module",
     "author": {
         "name": "Anne Martin",
         "email": "mart1095@stthomas.edu"
@@ -15,6 +16,7 @@
         "url": "https://github.com/anne-mart/webdev-dynamic-project2"
     },
     "dependencies": {
+        "chart.js": "^4.5.1",
         "express": "^5.1.0",
         "sqlite3": "^5.1.7"
     }

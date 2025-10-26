@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as url from 'node:url';
-
 import { default as express } from 'express';
 import { default as sqlite3 } from 'sqlite3';
 
@@ -13,7 +12,70 @@ const template = path.join(__dirname, 'templates');
 
 let app = express();
 app.use(express.static(root));
+const db = new sqlite3.Database("./births.sqlite3", sqlite3.OPEN_READONLY, (err) => {
+  if (err){
+    console.log("Error connecting to datebase");
+  }else{
+    console.log("Successfully conneted to database");
+  }
+})
 
+// births per month / homePage.html
+app.get('/birth_months', (req, res) => {
+  const sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
+    FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC;`; // sorting in ascending order
+
+  db.all(sql,[],(err, rows) => {
+    if (err) {
+      return res.status(500).send('SQL error');
+    }
+    res.status(200).json(rows);
+  });
+});
+app.get('/', (req, res) => {
+  fs.readFile(path.join(template,'homepage.html'),'utf8', (err, template) => {
+    if (err) {
+      return res.status(500).type('txt').send("Template error -- cannot load homePage.html");
+    }
+    let sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
+      FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC;`;
+
+    db.all(sql,[],(err, rows) => {
+      if (err) {
+        res.status(500).type('txt').send("SQL error");
+      }
+      let monthListHTML = '<ul>';
+      rows.forEach(row => {
+        monthListHTML += `<li>${row.month}: ${row.total_births} births</li>`;
+      });
+      monthListHTML += '</ul>';
+      const htmlResponse = template.replace('$$$MONTH_BIRTHS_LIST$$$', monthListHTML);
+      res.status(200).type('html').send(htmlResponse);
+    });
+  });
+});
+
+// page 3 -- Vincent
+app.get("/birth_day", (req,res) =>{
+    let sql = "SELECT day_of_week AS day, SUM(births) AS total ";
+    sql += "FROM births_table GROUP BY day_of_week ORDER BY day_of_week";
+    db.all(sql,[],(err,rows) => {
+        if(err){
+          res.status(500).type('txt').send("SQL error");
+        }else{
+          res.status(200).type("json").send(rows);
+        }
+    });
+})
+app.get("/page3", (req,res) =>{
+      fs.readFile(path.join(template, "page3.html"), {encoding: "utf8"}, (err,data) => {
+        if(err){
+          res.status(500).type('txt').send("Template error");
+        }else{
+          res.status(200).type("html").send(data);
+        }
+      })
+});
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
 });
