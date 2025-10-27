@@ -55,6 +55,52 @@ app.get('/', (req, res) => {
   });
 });
 
+// Ada page2
+app.get('/birth_year', (req, res) => {
+  const sql = `
+    SELECT CAST(year AS INTEGER) AS year,
+           SUM(CAST(births AS INTEGER)) AS total_births
+    FROM births_table
+    GROUP BY CAST(year AS INTEGER)
+    ORDER BY CAST(year AS INTEGER) ASC;
+  `;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).type('txt').send('SQL error');
+    }
+    res.status(200).json(rows);
+  });
+});
+
+// === Page 2 (Births per Year) – renders HTML template and injects a list ===
+app.get('/page2', (req, res) => {
+  fs.readFile(path.join(template, 'page2.html'), 'utf8', (err, tpl) => {
+    if (err) {
+      return res.status(500).type('txt').send('Template Error');
+    }
+    const sql = `
+      SELECT CAST(year AS INTEGER) AS year,
+             SUM(CAST(births AS INTEGER)) AS total_births
+      FROM births_table
+      GROUP BY CAST(year AS INTEGER)
+      ORDER BY CAST(year AS INTEGER) ASC;
+    `;
+    db.all(sql, [], (err2, rows) => {
+      if (err2) {
+        return res.status(500).type('txt').send('SQL error');
+      }
+      let list = '<ul>';
+      rows.forEach(r => { list += `<li>${r.year}: ${r.total_births} births</li>`; });
+      list += '</ul>';
+      const html = tpl.replace('$$$BIRTHS_PER_YEAR_LIST$$$', list);
+      res.status(200).type('html').send(html);
+    });
+  });
+});
+
+
+
+
 // page 3 -- Vincent
 app.get("/birth_day", (req,res) =>{
     let sql = "SELECT day_of_week AS day, SUM(births) AS total ";

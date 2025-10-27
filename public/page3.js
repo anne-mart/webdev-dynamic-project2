@@ -108,3 +108,41 @@ fetch("/birth_months")
       }
     });
   })
+
+// Birth per year work
+  fetch("/birth_year")
+  .then(res => {
+    return res.json(); 
+  })
+  .then(rows => {
+
+    // X and Y labels
+    let labels = rows.map(row => String(row.year));
+    let data = rows.map(row => Number(row.total_births));
+
+  
+    let ctx = document.getElementById('birthPerYearChart').getContext('2d');
+    
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Births per Year 2000-2014',
+          data: data,
+          backgroundColor: 'FF6384',
+          borderColor: '#FFB1C1',
+        }]
+      },
+      options: {
+        scales: {
+        // x-axis
+        x: {beginAtZero: true, title: {display: true,text: 'Year'}},
+        // y-axis
+          y: {beginAtZero: true,title: {display: true,text: 'Total Births'}},
+        },
+      }
+    });
+  })
+
+
