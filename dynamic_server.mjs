@@ -23,7 +23,7 @@ const db = new sqlite3.Database("./births.sqlite3", sqlite3.OPEN_READONLY, (err)
 // births per month / homePage.html
 app.get('/birth_months', (req, res) => {
   const sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
-    FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC;`; // sorting in ascending order
+    FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`; // sorting in ascending order
 
   db.all(sql,[],(err, rows) => {
     if (err) {
@@ -32,16 +32,19 @@ app.get('/birth_months', (req, res) => {
     res.status(200).json(rows);
   });
 });
-app.get('/', (req, res) => {
-  fs.readFile(path.join(template,'homepage.html'),'utf8', (err, template) => {
+
+app.get('/year/:year', (req, res) => {
+  //fs.readFile(path.join(template,'homepage.html'),'utf8', (err, template) => {
+  fs.readFile(path.join(template, 'homePage.html'), {encoding: 'utf8'}, (err, template) => {
     if (err) {
       return res.status(500).type('txt').send("Template error -- cannot load homePage.html");
     }
     let sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
-      FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC;`;
+      FROM births_table WHERE year == ? GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`;
 
-    db.all(sql,[],(err, rows) => {
+    db.all(sql,[req.params.year],(err, rows) => {
       if (err) {
+        console.log(err);
         res.status(500).type('txt').send("SQL error");
       }
       let monthListHTML = '<ul>';
@@ -49,7 +52,34 @@ app.get('/', (req, res) => {
         monthListHTML += `<li>${row.month}: ${row.total_births} births</li>`;
       });
       monthListHTML += '</ul>';
-      const htmlResponse = template.replace('$$$MONTH_BIRTHS_LIST$$$', monthListHTML);
+      const htmlResponse1 = template.replace('$$$YEAR$$$', req.params.year);
+      const htmlResponse = htmlResponse1.replace('$$$MONTH_BIRTHS_LIST$$$', monthListHTML);
+      res.status(200).type('html').send(htmlResponse);
+    });
+  });
+});
+
+app.get('/', (req, res) => {
+  //fs.readFile(path.join(template,'homepage.html'),'utf8', (err, template) => {
+  fs.readFile(path.join(template, 'homePage.html'), {encoding: 'utf8'}, (err, template) => {
+    if (err) {
+      return res.status(500).type('txt').send("Template error -- cannot load homePage.html");
+    }
+    let sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
+      FROM births_table WHERE year == 2000 GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`;
+
+    db.all(sql,[],(err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).type('txt').send("SQL error");
+      }
+      let monthListHTML = '<ul>';
+      rows.forEach(row => {
+        monthListHTML += `<li>${row.month}: ${row.total_births} births</li>`;
+      });
+      monthListHTML += '</ul>';
+      const htmlResponse1 = template.replace('$$$YEAR$$$', "2000");
+      const htmlResponse = htmlResponse1.replace('$$$MONTH_BIRTHS_LIST$$$', monthListHTML);
       res.status(200).type('html').send(htmlResponse);
     });
   });
