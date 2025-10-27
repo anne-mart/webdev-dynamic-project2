@@ -6,45 +6,58 @@ let names = {
     4: "Thursday",
     5: "Friday",
     6: "Saturday",
-    7: "Sunday"
+    7: "Sunday",
 };
+//gets the year from url
+let url_array = window.location.pathname.split('/');
+let year = url_array[url_array.length -1];
 
-fetch("/birth_day")
-    .then(res => {
-        return res.json();
-    })
-    .then(rows => {
-        let xValue = [];
-        let yValue = [];
+fetch("/birth_day/" + year)
+  .then(res => {
+    return res.json();
+  })
+  .then(rows => {
 
-        for (let day = 1; day <= 7; day++){
-            let total_days = 0;
-            for (let i = 0; i < rows.length; i++){
-                let week_day = Number(rows[i].day);
-                let sum = Number(rows[i].total);
-                if(week_day === day){
-                    total_days = sum;
-                }
+    // creating labels + data rows in the chart
+    let labels = rows.map(row => names[row.day] || row.day);
+    let data = rows.map(row => row.total);
+
+    // adding actual chart ...
+    let ctx = document.getElementById('birthChart_day').getContext('2d'); // this must be a 2d context
+     // chart stuff
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Births',
+          data: data,
+          backgroundColor: 'rgba(75, 192, 122, 0.2)',
+          borderColor: 'rgba(75, 192, 167, 1)',
+        }]
+      },
+      options: {
+        scales: {
+        // x-axis (month)
+        x: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Day'
             }
-            xValue.push(names[day]);
-            yValue.push(total_days);
+          },
+        // y-axis (births)
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Births'
+            }
+          }
         }
-
-        let trace1 = {
-            x: xValue,
-            y: yValue,
-            type: "bar",
-            text: yValue,
-        }
-
-        let trace = [trace1];
-
-        let layout = {
-            title: "Births per day"
-        }
-
-        Plotly.newPlot("plot", trace, layout);
+      }
     });
+  })
 
 // homePage.html work
 let months = {

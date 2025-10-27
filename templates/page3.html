@@ -7,6 +7,7 @@ Vincent -- page3 births per day of week through the years 2000-2014
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
+	<script src="/chart.js"></script>
 	<title>TEMP</title>
 </head>
 <body>
@@ -15,9 +16,11 @@ Vincent -- page3 births per day of week through the years 2000-2014
 		<a href="/page2">Page 2</a>
 		<a href="/page3">Page 3</a>
 	</nav>
-    <h1>Births per day of the week through the years 2000-2014</h1>
-	<div id = "plot"></div>
-	<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+	<ul>
+		$$$YEAR_LIST$$$
+	</ul>
+    <h1>Births per day of the week in the year $$$YEAR$$$</h1>
+	<canvas id="birthChart_day" width="400" height="200"></canvas>
 	<script src="/page3.js"></script>
 </body>
 </html>
