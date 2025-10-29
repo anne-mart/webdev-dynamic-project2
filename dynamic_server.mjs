@@ -110,46 +110,42 @@ app.get('/', (req, res) => {
   });
 });
 
-// Ada page2
-app.get('/birth_year', (req, res) => {
-  const sql = `
-    SELECT CAST(year AS INTEGER) AS year,
-           SUM(CAST(births AS INTEGER)) AS total_births
-    FROM births_table
-    GROUP BY CAST(year AS INTEGER)
-    ORDER BY CAST(year AS INTEGER) ASC;
-  `;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      return res.status(500).type('txt').send('SQL error');
-    }
-    res.status(200).json(rows);
-  });
+
+//Births per year - ada
+app.get('/page2', (req, res) => {
+  res.redirect('/page2/2000');   
 });
 
-// === Page 2 (Births per Year) – renders HTML template and injects a list ===
-app.get('/page2', (req, res) => {
+app.get('/page2/:year', (req, res) => {
+  const y = Number(req.params.year);
+  const sql = `SELECT SUM(CAST(births AS INTEGER)) AS total_births
+               FROM births_table WHERE year = ?`;
+
   fs.readFile(path.join(template, 'page2.html'), 'utf8', (err, tpl) => {
-    if (err) {
-      return res.status(500).type('txt').send('Template Error');
-    }
-    const sql = `
-      SELECT CAST(year AS INTEGER) AS year,
-             SUM(CAST(births AS INTEGER)) AS total_births
-      FROM births_table
-      GROUP BY CAST(year AS INTEGER)
-      ORDER BY CAST(year AS INTEGER) ASC;
-    `;
-    db.all(sql, [], (err2, rows) => {
-      if (err2) {
-        return res.status(500).type('txt').send('SQL error');
-      }
-      let list = '<ul>';
-      rows.forEach(r => { list += `<li>${r.year}: ${r.total_births} births</li>`; });
-      list += '</ul>';
-      const html = tpl.replace('$$$BIRTHS_PER_YEAR_LIST$$$', list);
+    if (err) return res.status(500).type('txt').send('Template error -- cannot load page2.html');
+
+    db.get(sql, [y], (e, row) => {
+      if (e)   return res.status(500).type('txt').send('SQL error');
+      if (!row || row.total_births == null)
+        return res.status(404).type('txt').send(`No data for year ${y}.`);
+
+      const html = tpl
+        .replace(/\$\$\$YEAR\$\$\$/g, String(y))
+        .replace('$$$BIRTHS_PER_YEAR_LIST$$$', '') 
+        .replace('$$$TOTAL_BIRTHS$$$', Number(row.total_births).toLocaleString());
+
       res.status(200).type('html').send(html);
     });
+  });
+});
+app.get('/birth_year/:year', (req, res) => {
+  const y = Number(req.params.year);
+  const sql = `SELECT SUM(CAST(births AS INTEGER)) AS total_births
+               FROM births_table WHERE year = ?`;
+  db.get(sql, [y], (err, row) => {
+    if (err) return res.status(500).send('SQL error');
+    if (!row || row.total_births == null) return res.status(404).send(`No data for year ${y}.`);
+    res.json({ year: y, total_births: row.total_births });
   });
 });
 

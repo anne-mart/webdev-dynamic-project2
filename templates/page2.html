@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <title>Births per Year</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/styles.css" />
-  <script src="/chart.js"></script>
-  <script src="/page3.js"></script>
+  <script src="/chart.js" defer></script>
+  <script src="/page3.js" defer></script>
 </head>
 <body>
   <nav>
@@ -15,12 +14,23 @@
     <a href="/page3">Page 3</a>
   </nav>
 
-  <h1>Births per Year</h1>
+  <h1>Total births in $$$YEAR$$$</h1>
 
-  <canvas id="birthPerYearChart" width="600" height="300"></canvas>
+  
+  <div id="yearNav" style="display:flex; align-items:center; justify-content:center; gap:20px;">
+    <div id="yearDropdown" style="text-align:center; margin:1rem 0;">
+      <label for="yearSelect" style="font-weight:bold; margin-right:0.5rem;">Year:</label>
+      <select id="yearSelect"></select>
+    </div>
+    <button id="prevYearBtn">Prev</button>
+    <h1 id="yearTitle">$$$YEAR$$$</h1>
+    <button id="nextYearBtn">Next</button>
+  </div>
+
+  <p style="font-size:1.5rem;">$$$TOTAL_BIRTHS$$$</p>
+
+  <canvas id="birthPerYearChart" width="900" height="420" aria-label="Births per Year" role="img"></canvas>
 
   $$$BIRTHS_PER_YEAR_LIST$$$
-
-
 </body>
 </html>
