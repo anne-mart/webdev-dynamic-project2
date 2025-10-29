@@ -118,7 +118,7 @@ fetch(`/data/year/${year}`)
     });
   })
 
-// getting year dynamically -- default to 2000
+/*// getting year dynamically -- default to 2000
 let currentYearFromURL = parseInt(window.location.pathname.split('/').pop()) || 2000;
 // get years
 fetch("/years")
@@ -151,7 +151,54 @@ fetch("/years")
     });
   })
   .catch(err => console.error("Error fetching years:", err));
+*/
 
+//YEAR NAV (works on /, /year/2000, /page2/2000, /page3/2000, etc.)
+const currentYearFromURL = parseInt(location.pathname.split('/').pop(), 10) || 2000;
+
+fetch('/years')
+  .then(r => r.json())
+  .then(years => {
+    const prevBtn     = document.getElementById('prevYearBtn');
+    const nextBtn     = document.getElementById('nextYearBtn');
+    const yearSelect  = document.getElementById('yearSelect');
+    const yearTitleEl = document.getElementById('yearTitle');
+
+    if (yearTitleEl) yearTitleEl.textContent = currentYearFromURL;
+    if (yearSelect) {
+      yearSelect.innerHTML = years
+        .map(y => `<option value="${y}" ${y===currentYearFromURL?'selected':''}>${y}</option>`)
+        .join('');
+    }
+
+    const idx = years.indexOf(currentYearFromURL);
+
+    //keep same base path
+    const goToYear = (y) => {
+      const hasYear = /\d{4}$/.test(location.pathname);
+      const url = hasYear
+        ? location.pathname.replace(/\d{4}$/, String(y))
+        : `/year/${y}`;
+      location.href = url;
+    };
+
+    if (prevBtn) {
+      prevBtn.disabled = idx <= 0;
+      prevBtn.addEventListener('click', () => { if (idx > 0) goToYear(years[idx - 1]); });
+    }
+
+    if (nextBtn) {
+      nextBtn.disabled = idx === -1 || idx >= years.length - 1;
+      nextBtn.addEventListener('click', () => {
+        if (idx !== -1 && idx < years.length - 1) goToYear(years[idx + 1]);
+      });
+    }
+
+    if (yearSelect) {
+      yearSelect.addEventListener('change', (e) => goToYear(e.target.value));
+    }
+  })
+  .catch(err => console.error('Error fetching /years:', err));
 
 // Birth per year work
 const yearForPage = (location.pathname.split('/').pop() || '2000').replace(/\D/g, '') || '2000';
