@@ -16,10 +16,16 @@ Vincent -- page3 births per day of week through the years 2000-2014
 		<a href="/page2">Page 2</a>
 		<a href="/page3">Page 3</a>
 	</nav>
-	<ul>
-		$$$YEAR_LIST$$$
-	</ul>
-    <h1>Births per day of the week in the year $$$YEAR$$$</h1>
+		<div id="yearNav" style="display:flex; align-items:center; justify-content:center; gap:20px;">
+			<div id="yearDropdown" style="text-align:center; margin:1rem 0;">
+			<label for="yearSelect" style="font-weight:bold; margin-right:0.5rem;">Year:</label>
+			<select id="yearSelect"></select>
+		</div>
+		<button id="prevYearBtn">Prev</button>
+  		<h1 id="yearTitle">$$$YEAR$$$</h1>
+  		<button id="nextYearBtn">Next</button>
+	</div>
+    <h1>Births per day of the week in the year $$$YEARS$$$</h1>
 	<canvas id="birthChart_day" width="400" height="200"></canvas>
 	<script src="/page3.js"></script>
 </body>

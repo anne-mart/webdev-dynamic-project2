@@ -171,20 +171,20 @@ app.get("/page3/:year", (req,res) =>{
       res.status(500).type('txt').send("SQL error");
     }else{
       fs.readFile(path.join(template, "page3.html"), {encoding: "utf8"}, (err,data) => {
-        let currentYear = parseInt(req.params.year,10);
-        let year_list = '';
+        // let currentYear = parseInt(req.params.year,10);
+        // let year_list = '';
         if(err){
           res.status(500).type('txt').send("Template error");
         }else{
-          for ( let i = 0; i < rows.length; i ++){
-            year_list += "<li>";
-            let year_num = parseInt(rows[i].year,10);
-            if (year_num != currentYear){
-              year_list += '<a href="/page3/' + year_num + '">' + year_num + "</a>";
-            }
-            year_list += "</li>";
-          }
-          let htmlPage3 = data.replace("$$$YEAR$$$", req.params.year).replace("$$$YEAR_LIST$$$", year_list);
+          // for ( let i = 0; i < rows.length; i ++){
+          //   year_list += "<li>";
+          //   let year_num = parseInt(rows[i].year,10);
+          //   if (year_num != currentYear){
+          //     year_list += '<a href="/page3/' + year_num + '">' + year_num + "</a>";
+          //   }
+          //   year_list += "</li>";
+          // }
+          let htmlPage3 = data.replace("$$$YEARS$$$", req.params.year)//.replace("$$$YEAR_LIST$$$", year_list);
           res.status(200).type("html").send(htmlPage3);
         }
       })
