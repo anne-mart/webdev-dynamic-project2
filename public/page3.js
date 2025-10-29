@@ -61,13 +61,12 @@ let months = {
   11: "November",
   12: "December"
 };
-
-fetch("/birth_months")
+let year = window.location.pathname.split('/').pop()||'2000'; // Default to 2000
+fetch(`/data/year/${year}`)
   .then(res => {
     return res.json();
   })
   .then(rows => {
-
     // creating labels + data rows in the chart
     let labels = rows.map(row => months[row.month] || row.month);
     let data = rows.map(row => row.total_births);
@@ -80,7 +79,7 @@ fetch("/birth_months")
       data: {
         labels: labels,
         datasets: [{
-          label: 'Births per Month 2000-2014',
+          label: `Births per Month ${year}`,
           data: data,
           backgroundColor: 'rgba(75, 192, 122, 0.2)',
           borderColor: 'rgba(75, 192, 167, 1)',
@@ -108,6 +107,42 @@ fetch("/birth_months")
       }
     });
   })
+
+// getting year dynamically -- default to 2000
+let currentYearFromURL = parseInt(window.location.pathname.split('/').pop()) || 2000;
+
+// get years
+fetch("/years")
+  .then(res => res.json())
+  .then(years => {
+    // previous and next buttons
+    const prevBtn = document.getElementById("prevYearBtn");
+    const nextBtn = document.getElementById("nextYearBtn");
+    // pdating current index
+    const currentIndex = years.indexOf(currentYearFromURL);
+    // update yr
+    document.getElementById("yearTitle").textContent = currentYearFromURL;
+
+    // want to check if trying to go beyond years in dataset
+    // disable if true
+    prevBtn.disabled = currentIndex <= 0;
+    nextBtn.disabled = currentIndex >= years.length - 1 || currentIndex == -1;
+
+    // event listenet for buttons...
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        const prevYear = years[currentIndex - 1];
+        window.location.href = `/year/${prevYear}`;
+      }
+    });
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < years.length - 1 && currentIndex != -1) {
+        const nextYear = years[currentIndex + 1];
+        window.location.href = `/year/${nextYear}`;
+      }
+    });
+  })
+  .catch(err => console.error("Error fetching years:", err));
 
 // Birth per year work
   fetch("/birth_year")

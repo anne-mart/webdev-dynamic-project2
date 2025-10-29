@@ -20,18 +20,31 @@ const db = new sqlite3.Database("./births.sqlite3", sqlite3.OPEN_READONLY, (err)
   }
 })
 
-// births per month / homePage.html
-app.get('/birth_months', (req, res) => {
-  const sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
-    FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`; // sorting in ascending order
 
-  db.all(sql,[],(err, rows) => {
+app.get('/years', (req, res) => {
+  const sql = `SELECT DISTINCT CAST(year AS INTEGER) AS year
+    FROM births_table ORDER BY year ASC`;
+  db.all(sql, [], (err, rows) => {
     if (err) {
       return res.status(500).send('SQL error');
     }
-    res.status(200).json(rows);
+    res.status(200).json(rows.map(row => row.year));
   });
 });
+
+// dont think i need this but keeping just in case
+// births per month / homePage.html
+// app.get('/birth_months', (req, res) => {
+//   const sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
+//     FROM births_table GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`; // sorting in ascending order
+
+//   db.all(sql,[],(err, rows) => {
+//     if (err) {
+//       return res.status(500).send('SQL error');
+//     }
+//     res.status(200).json(rows);
+//   });
+// });
 
 app.get('/year/:year', (req, res) => {
   //fs.readFile(path.join(template,'homepage.html'),'utf8', (err, template) => {
@@ -56,6 +69,18 @@ app.get('/year/:year', (req, res) => {
       const htmlResponse = htmlResponse1.replace('$$$MONTH_BIRTHS_LIST$$$', monthListHTML);
       res.status(200).type('html').send(htmlResponse);
     });
+  });
+});
+
+app.get('/data/year/:year', (req, res) => {
+  const sql = `SELECT month, SUM(CAST(births AS INTEGER)) AS total_births
+    FROM births_table WHERE year == ? GROUP BY month ORDER BY CAST(month AS INTEGER) ASC`;
+
+  db.all(sql, [req.params.year], (err, rows) => {
+    if (err) {
+      return res.status(500).send('SQL error');
+    }
+    res.status(200).json(rows);
   });
 });
 

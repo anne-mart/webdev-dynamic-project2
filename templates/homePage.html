@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="/styles.css">
   <script src="/chart.js"></script>
   <script src="/page3.js"></script>
+  <script src="/dropdown.js"></script>
 </head>
 <body>
   <nav>
@@ -13,7 +14,19 @@
     <a href="/page3">Page 3</a>
   </nav>
   <h1>Home Page</h1>
-  <h1>$$$YEAR$$$</h1>
+  
+  <!-- <h1>$$$YEAR$$$</h1> -->
+   <div id="yearNav" style="display:flex; align-items:center; justify-content:center; gap:20px;">
+
+  <div id="yearDropdown" style="text-align:center; margin:1rem 0;">
+  <label for="yearSelect" style="font-weight:bold; margin-right:0.5rem;">Year:</label>
+  <select id="yearSelect"></select>
+
+</div>
+  <button id="prevYearBtn">Prev</button>
+  <h1 id="yearTitle">$$$YEAR$$$</h1>
+  <button id="nextYearBtn">Next</button>
+  </div>
   <img src="/calendar.jpg" alt="calendar">
   <h2>Births Per Month</h2>
   <canvas id="birthChart" width="400" height="200"></canvas>
