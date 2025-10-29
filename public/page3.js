@@ -6,11 +6,9 @@ let names = {
     4: "Thursday",
     5: "Friday",
     6: "Saturday",
-    7: "Sunday",
+    7: "Sunday"
 };
-//gets the year from url
-let url_array = window.location.pathname.split('/');
-let year = url_array[url_array.length -1];
+let year = window.location.pathname.split('/').pop()||'2000'; // Default to 2000
 
 fetch("/birth_day/" + year)
   .then(res => {
@@ -74,7 +72,6 @@ let months = {
   11: "November",
   12: "December"
 };
-let year = window.location.pathname.split('/').pop()||'2000'; // Default to 2000
 fetch(`/data/year/${year}`)
   .then(res => {
     return res.json();
@@ -192,5 +189,3 @@ fetch("/years")
       }
     });
   })
-
-
