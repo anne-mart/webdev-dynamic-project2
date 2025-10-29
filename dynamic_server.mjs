@@ -153,29 +153,51 @@ app.get('/page2', (req, res) => {
   });
 });
 
-
-
-
 // page 3 -- Vincent
-app.get("/birth_day", (req,res) =>{
+//the fetch
+app.get("/birth_day/:year", (req,res) =>{
     let sql = "SELECT day_of_week AS day, SUM(births) AS total ";
-    sql += "FROM births_table GROUP BY day_of_week ORDER BY day_of_week";
-    db.all(sql,[],(err,rows) => {
+    sql += "FROM births_table WHERE year == ? GROUP BY day_of_week ORDER BY day_of_week";
+    db.all(sql,[req.params.year],(err,rows) => {
         if(err){
+          console.log(err);
           res.status(500).type('txt').send("SQL error");
         }else{
           res.status(200).type("json").send(rows);
         }
     });
-})
-app.get("/page3", (req,res) =>{
+});
+//page with certain years 
+app.get("/page3/:year", (req,res) =>{
+  let sql = "SELECT DISTINCT year FROM births_table ORDER BY year";
+  db.all(sql,[],(err,rows) => {
+    if(err){
+      res.status(500).type('txt').send("SQL error");
+    }else{
       fs.readFile(path.join(template, "page3.html"), {encoding: "utf8"}, (err,data) => {
+        let currentYear = parseInt(req.params.year,10);
+        let year_list = '';
         if(err){
           res.status(500).type('txt').send("Template error");
         }else{
-          res.status(200).type("html").send(data);
+          for ( let i = 0; i < rows.length; i ++){
+            year_list += "<li>";
+            let year_num = parseInt(rows[i].year,10);
+            if (year_num != currentYear){
+              year_list += '<a href="/page3/' + year_num + '">' + year_num + "</a>";
+            }
+            year_list += "</li>";
+          }
+          let htmlPage3 = data.replace("$$$YEAR$$$", req.params.year).replace("$$$YEAR_LIST$$$", year_list);
+          res.status(200).type("html").send(htmlPage3);
         }
       })
+    }
+  })
+});
+//defualt page
+app.get("/page3", (req,res) =>{
+  res.redirect("/page3/2000");
 });
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
