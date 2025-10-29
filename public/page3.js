@@ -120,51 +120,22 @@ fetch(`/data/year/${year}`)
 
 // getting year dynamically -- default to 2000
 let currentYearFromURL = parseInt(window.location.pathname.split('/').pop()) || 2000;
-
 // get years
 fetch("/years")
   .then(res => res.json())
   .then(years => {
     // previous and next buttons
-    const prevBtn     = document.getElementById('prevYearBtn');
-    const nextBtn     = document.getElementById('nextYearBtn');
-    const yearSelect  = document.getElementById('yearSelect');
-    const yearTitleEl = document.getElementById('yearTitle');
-    if (!prevBtn || !nextBtn || !yearSelect || !yearTitleEl) return;
-    yearTitleEl.textContent = currentYearFromURL;
-    // populate dropdown
-    yearSelect.innerHTML = years
-      .map(y => `<option value="${y}" ${y === currentYearFromURL ? 'selected' : ''}>${y}</option>`)
-      .join('');
-      const idx = years.indexOf(currentYearFromURL);
-      // keep whatever base path you're on 
-    const basePath = location.pathname.replace(/\/\d{4}$/, '') || '/page2';
-    // handlers
-    prevBtn.addEventListener('click', () => {
-      if (idx > 0) location.href = `${basePath}/${years[idx - 1]}`;
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (idx !== -1 && idx < years.length - 1) {
-        location.href = `${basePath}/${years[idx + 1]}`;
-      }
-    });
-
-    yearSelect.addEventListener('change', (e) => {
-      location.href = `${basePath}/${e.target.value}`;
-    });
-  })
-  .catch(err => console.error('Error fetching /years:', err));
+    const prevBtn = document.getElementById("prevYearBtn");
+    const nextBtn = document.getElementById("nextYearBtn");
     // pdating current index
-    //const currentIndex = years.indexOf(currentYearFromURL);
-    // update yr
-    //document.getElementById("yearTitle").textContent = currentYearFromURL;
+    const currentIndex = years.indexOf(currentYearFromURL);
 
+    // update yr
+    document.getElementById("yearTitle").textContent = currentYearFromURL;
     // want to check if trying to go beyond years in dataset
     // disable if true
-    /*prevBtn.disabled = currentIndex <= 0;
+    prevBtn.disabled = currentIndex <= 0;
     nextBtn.disabled = currentIndex >= years.length - 1 || currentIndex == -1;
-
     // event listenet for buttons...
     prevBtn.addEventListener("click", () => {
       if (currentIndex > 0) {
@@ -180,7 +151,7 @@ fetch("/years")
     });
   })
   .catch(err => console.error("Error fetching years:", err));
-  */
+
 
 // Birth per year work
 const yearForPage = (location.pathname.split('/').pop() || '2000').replace(/\D/g, '') || '2000';
